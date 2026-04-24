@@ -1,0 +1,363 @@
+<div class="esim-wrap">
+  <div class="esim-card">
+    <div class="esim-icon">📶</div>
+    <span class="esim-badge">Live eSIM Tracker</span>
+
+    <h1>Track Your eSIM Usage</h1>
+    <p class="esim-subtitle">
+      Check your data usage, remaining balance, expiry date, and package status.
+    </p>
+
+    <div class="esim-form">
+      <input id="esimId" type="text" placeholder="Paste your eSIM ID here" />
+      <button onclick="checkUsage()">Check Usage</button>
+    </div>
+
+    <div id="result"></div>
+  </div>
+</div>
+
+<style>
+.esim-wrap{
+  min-height:85vh;
+  padding:45px 14px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#eef7ff,#f8fbff 55%,#eafaf4);
+  font-family:Inter,Arial,sans-serif;
+}
+.esim-card{
+  width:100%;
+  max-width:760px;
+  background:rgba(255,255,255,.95);
+  border:1px solid rgba(226,232,240,.9);
+  border-radius:30px;
+  padding:36px;
+  box-shadow:0 25px 70px rgba(15,23,42,.14);
+  text-align:center;
+}
+.esim-icon{
+  width:62px;
+  height:62px;
+  margin:0 auto 14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:20px;
+  background:#e0f2fe;
+  font-size:30px;
+}
+.esim-badge{
+  display:inline-block;
+  padding:8px 15px;
+  border-radius:999px;
+  background:#ecfeff;
+  color:#0369a1;
+  font-size:13px;
+  font-weight:800;
+}
+.esim-card h1{
+  margin:16px 0 10px;
+  color:#0f172a;
+  font-size:38px;
+  line-height:1.1;
+}
+.esim-subtitle{
+  margin:0 auto 28px;
+  max-width:560px;
+  color:#64748b;
+  font-size:16px;
+  line-height:1.7;
+}
+.esim-form{
+  display:flex;
+  gap:12px;
+  padding:8px;
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:20px;
+}
+#esimId{
+  flex:1;
+  border:0;
+  background:transparent;
+  padding:16px;
+  font-size:16px;
+  outline:none;
+  color:#0f172a;
+}
+.esim-form button{
+  border:0;
+  border-radius:15px;
+  padding:16px 24px;
+  background:linear-gradient(135deg,#0284c7,#2563eb);
+  color:#fff;
+  font-weight:900;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.esim-form button:hover{
+  opacity:.92;
+}
+.loading,.error{
+  margin-top:22px;
+  padding:16px;
+  border-radius:18px;
+  font-weight:800;
+}
+.loading{
+  background:#eff6ff;
+  color:#1d4ed8;
+}
+.error{
+  background:#fee2e2;
+  color:#b91c1c;
+}
+.result-panel{
+  margin-top:28px;
+  text-align:left;
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:26px;
+  padding:24px;
+}
+.result-head{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  align-items:flex-start;
+  margin-bottom:20px;
+}
+.package-title{
+  font-size:19px;
+  line-height:1.4;
+  color:#0f172a;
+  font-weight:900;
+}
+.status-pill{
+  padding:8px 13px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:900;
+}
+.status-active{
+  background:#dcfce7;
+  color:#15803d;
+}
+.status-expired{
+  background:#fee2e2;
+  color:#b91c1c;
+}
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+.stat{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:20px;
+  padding:18px;
+}
+.stat-label{
+  color:#64748b;
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:8px;
+}
+.stat-value{
+  color:#0f172a;
+  font-size:22px;
+  font-weight:900;
+}
+.progress-area{
+  margin:22px 0;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:20px;
+  padding:18px;
+}
+.progress-top{
+  display:flex;
+  justify-content:space-between;
+  color:#475569;
+  font-size:14px;
+  font-weight:800;
+  margin-bottom:10px;
+}
+.progress-bg{
+  height:18px;
+  background:#e2e8f0;
+  border-radius:999px;
+  overflow:hidden;
+}
+.progress-bar{
+  height:100%;
+  background:linear-gradient(90deg,#22c55e,#0ea5e9);
+  border-radius:999px;
+}
+.info-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+}
+.info-box{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:20px;
+  padding:16px;
+}
+.info-label{
+  color:#64748b;
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:7px;
+}
+.info-value{
+  color:#0f172a;
+  font-size:15px;
+  font-weight:850;
+  word-break:break-word;
+}
+.small-note{
+  margin-top:18px;
+  color:#64748b;
+  font-size:13px;
+  line-height:1.6;
+  text-align:center;
+}
+@media(max-width:700px){
+  .esim-card{padding:24px 16px;border-radius:24px}
+  .esim-card h1{font-size:30px}
+  .esim-form{flex-direction:column}
+  .esim-form button{width:100%}
+  .stats-grid,.info-grid{grid-template-columns:1fr}
+  .result-head{flex-direction:column}
+}
+</style>
+
+<script>
+const WORKER_URL = "https://withered-wind-0e1esim.9isas1maroc.workers.dev/";
+
+async function checkUsage() {
+  const id = document.getElementById("esimId").value.trim();
+  const result = document.getElementById("result");
+
+  if (!id) {
+    result.innerHTML = "<div class='error'>Please enter your eSIM ID.</div>";
+    return;
+  }
+
+  result.innerHTML = "<div class='loading'>Checking your eSIM details...</div>";
+
+  try {
+    const res = await fetch(WORKER_URL + "?id=" + encodeURIComponent(id));
+    const json = await res.json();
+
+    if (!json.success) {
+      result.innerHTML = "<div class='error'>No data found. Please check your eSIM ID.</div>";
+      return;
+    }
+
+    const bundle = json.bundle || json.simDetails?.data?.in_use_packages?.[0];
+    if (!bundle) {
+      result.innerHTML = "<div class='error'>Package details not found.</div>";
+      return;
+    }
+
+    const total = Number(bundle.initial_data_quantity || 0);
+    const remaining = Number(bundle.rem_data_quantity || 0);
+    const unit = bundle.initial_data_unit || "GB";
+    const used = Math.max(0, total - remaining);
+    const percentUsed = total > 0 ? Math.min(100, Math.max(0, (used / total) * 100)) : 0;
+
+    const expiryRaw = bundle.date_expiry;
+    const activatedRaw = bundle.date_activated || "Not available";
+
+    let expiryText = "Not available";
+    let daysLeftText = "Not available";
+    let status = bundle.status || "Active";
+    let statusClass = "status-active";
+
+    if (expiryRaw) {
+      const expiryDate = new Date(String(expiryRaw).replace(" ", "T"));
+      expiryText = expiryDate.toLocaleString();
+
+      const diff = expiryDate - new Date();
+      const daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
+
+      if (daysLeft < 0) {
+        daysLeftText = "Expired";
+        status = "Expired";
+        statusClass = "status-expired";
+      } else {
+        daysLeftText = daysLeft + " days";
+      }
+    }
+
+    const packageName = bundle.package || "eSIM Package";
+
+    result.innerHTML = `
+      <div class="result-panel">
+        <div class="result-head">
+          <div>
+            <div class="package-title">${packageName}</div>
+          </div>
+          <div class="status-pill ${statusClass}">${status}</div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat">
+            <div class="stat-label">Total Data</div>
+            <div class="stat-value">${total} ${unit}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Used Data</div>
+            <div class="stat-value">${used.toFixed(2)} ${unit}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Remaining</div>
+            <div class="stat-value">${remaining} ${unit}</div>
+          </div>
+        </div>
+
+        <div class="progress-area">
+          <div class="progress-top">
+            <span>Data Used</span>
+            <span>${percentUsed.toFixed(0)}%</span>
+          </div>
+          <div class="progress-bg">
+            <div class="progress-bar" style="width:${percentUsed}%"></div>
+          </div>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-box">
+            <div class="info-label">Activated Date</div>
+            <div class="info-value">${activatedRaw}</div>
+          </div>
+          <div class="info-box">
+            <div class="info-label">Expiry Date</div>
+            <div class="info-value">${expiryText}</div>
+          </div>
+          <div class="info-box">
+            <div class="info-label">Days Left</div>
+            <div class="info-value">${daysLeftText}</div>
+          </div>
+          <div class="info-box">
+            <div class="info-label">eSIM Status</div>
+            <div class="info-value">${status}</div>
+          </div>
+        </div>
+
+        <div class="small-note">
+          Usage data is provided by the eSIM network system and may take a few minutes to refresh.
+        </div>
+      </div>
+    `;
+  } catch (e) {
+    result.innerHTML = "<div class='error'>Error checking usage. Please try again later.</div>";
+  }
+}
+</script>
